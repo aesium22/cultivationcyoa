@@ -1051,7 +1051,8 @@
                 let summaryText = '';
                 
                 if (selections.sect) {
-                    summaryText += `📍 **Starting Sect:** ${selections.sect}\n\n`;
+                    const sectDescription = document.querySelector(`.option[data-type="sect"][data-name="${selections.sect}"] .option-description`).textContent.trim();
+                    summaryText += `📍 **Starting Sect: ${selections.sect}**\n${sectDescription}\n\n`;
                 } else {
                     summaryText += `📍 **Starting Sect:** None selected\n\n`;
                 }
@@ -1059,7 +1060,8 @@
                 if (selections.abilities.length > 0) {
                     summaryText += `🔹 **Abilities:**\n`;
                     selections.abilities.forEach(ability => {
-                        summaryText += `- ${ability}\n`;
+                        const abilityDescription = document.querySelector(`.option[data-type="ability"][data-name="${ability}"] .option-description`)?.textContent.trim() || '';
+                        summaryText += `- **${ability}** - ${abilityDescription.replace(/\n+/g, ' ')}\n`;
                     });
                     summaryText += '\n';
                 } else {
@@ -1069,7 +1071,8 @@
                 if (selections.martial.length > 0) {
                     summaryText += `⚔️ **Martial Affinities:**\n`;
                     selections.martial.forEach(martial => {
-                        summaryText += `- ${martial}\n`;
+                        const martialDescription = document.querySelector(`.option[data-type="martial"][data-name="${martial}"] .option-description`)?.textContent.trim() || '';
+                        summaryText += `- **${martial}** - ${martialDescription.replace(/\n+/g, ' ')}\n`;
                     });
                     summaryText += '\n';
                 } else {
@@ -1077,15 +1080,58 @@
                 }
                 
                 if (selections.goal) {
-                    summaryText += `🏆 **Cultivation Goal:** ${selections.goal}\n`;
+                    const goalDescription = document.querySelector(`.option[data-type="goal"][data-name="${selections.goal}"] .option-description`).textContent.trim();
+                    summaryText += `🏆 **Cultivation Goal: ${selections.goal}**\n${goalDescription.replace(/\n+/g, ' ')}\n\n`;
                 } else {
-                    summaryText += `🏆 **Cultivation Goal:** None selected\n`;
+                    summaryText += `🏆 **Cultivation Goal:** None selected\n\n`;
                 }
                 
-                summaryText += `\n💰 **Points Remaining:** ${pointsLeft}/10`;
+                summaryText += `💰 **Points Remaining:** ${pointsLeft}/10`;
                 
                 summaryElement.textContent = summaryText;
             });
+
+            // // Summary Button
+            // document.getElementById('summary-button').addEventListener('click', function() {
+            //     const summaryElement = document.getElementById('summary');
+            //     let summaryText = '';
+                
+            //     if (selections.sect) {
+            //         summaryText += `📍 **Starting Sect:** ${selections.sect}\n\n`;
+            //     } else {
+            //         summaryText += `📍 **Starting Sect:** None selected\n\n`;
+            //     }
+                
+            //     if (selections.abilities.length > 0) {
+            //         summaryText += `🔹 **Abilities:**\n`;
+            //         selections.abilities.forEach(ability => {
+            //             summaryText += `- ${ability}\n`;
+            //         });
+            //         summaryText += '\n';
+            //     } else {
+            //         summaryText += `🔹 **Abilities:** None selected\n\n`;
+            //     }
+                
+            //     if (selections.martial.length > 0) {
+            //         summaryText += `⚔️ **Martial Affinities:**\n`;
+            //         selections.martial.forEach(martial => {
+            //             summaryText += `- ${martial}\n`;
+            //         });
+            //         summaryText += '\n';
+            //     } else {
+            //         summaryText += `⚔️ **Martial Affinities:** None selected\n\n`;
+            //     }
+                
+            //     if (selections.goal) {
+            //         summaryText += `🏆 **Cultivation Goal:** ${selections.goal}\n`;
+            //     } else {
+            //         summaryText += `🏆 **Cultivation Goal:** None selected\n`;
+            //     }
+                
+            //     summaryText += `\n💰 **Points Remaining:** ${pointsLeft}/10`;
+                
+            //     summaryElement.textContent = summaryText;
+            // });
 
             // Update option availability based on points
             function updateOptions() {
