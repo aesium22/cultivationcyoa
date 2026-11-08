@@ -303,6 +303,11 @@
         .tab-button { font-size: 1.05rem; padding: 4px 8px; }
         #toasts { left: 10px; right: 10px; max-width: none; }
         }
+        .dim-help { margin: -0.8rem 0 1.4rem; max-width: 640px; font-size: 0.92rem; color: var(--muted); }
+        .dim-help summary { cursor: pointer; color: var(--gold); }
+        .dim-help dl { margin-top: 8px; display: grid; grid-template-columns: 150px 1fr; gap: 4px 12px; }
+        .dim-help dt { color: var(--text); }
+        @media (max-width: 760px) { .dim-help dl { grid-template-columns: 1fr; } .dim-help dd { margin-bottom: 6px; } }
         </style>
     </head>
     <body>
@@ -316,7 +321,7 @@
                 The heavens say nothing, and everything obeys them.</p>
             </header>
             <div class="points-tracker">
-                <span id="points-wrap"><span class="pips" id="pips"></span> <span><span id="points-left">10</span> of 10 points left</span> <span id="over-note" class="over-text" style="display:none">over budget</span></span>
+                <span id="points-wrap"><span class="pips" id="pips"></span> <span><span id="points-left">12</span> of 12 points left</span> <span id="over-note" class="over-text" style="display:none">over budget</span></span>
                 <span id="resonance-count" class="resonance-count"></span>
                 <button id="reset" class="reset-button">Reset</button>
             </div>
@@ -334,7 +339,7 @@
                 <div class="section-description">
                     <p>You are a teenager with more talent than most of your peers and less than a true prodigy. No immortal's soul sleeps inside you, and no prophecy carries your name.</p>
                     <p>Ahead are trials, temptations and tribulations. You may win power, influence, even immortality, or lose yourself chasing them.</p>
-                    <p>You have ten points. Spend them to decide what kind of cultivator you will become.</p>
+                    <p>You have twelve points. Spend them to decide what kind of cultivator you will become.</p>
                     
                     <p>Cultivation follows three primary paths:</p>
                     <ul>
@@ -343,9 +348,9 @@
                         <li><strong>Soul</strong> – Innate powers, mental resistance, possession, karmic tools.</li>
                     </ul>
                     <p>Every cultivator climbs through seven major stages:</p>
-                    <p>Qi Condensation → Foundation → Core Formation → Nascent Soul / Dao Formation → Earth → Heaven → Immortal</p>
+                    <p>Qi Condensation → Foundation → Core Formation → Nascent Soul (also called Dao Formation) → Earth → Heaven → Immortal</p>
                     <ul>
-                        <li>Each major stage is entered through a heavenly tribulation.</li>
+                        <li>Every major stage after Qi Condensation is entered through a heavenly tribulation.</li>
                         <li>Each stage is divided into subrealms, reached through minor breakthroughs.</li>
                         <li>Power grows two ways: a flat gain from each new level, and a multiplier set by the quality of your foundation.</li>
                         <li>A typical cultivator gains 100% power per major stage. With an excellent foundation, the gain can reach 300%.</li>
@@ -361,8 +366,8 @@
                     <ul>
                         <li><strong>Cultivation is rare and hard.</strong> About one person in a thousand can cultivate at all, and only one in ten of those clears each major stage. Talent, foundation and teaching decide who does. Youth helps: a young body and soul are easier to shape and carry less karma. With average techniques and no advantages, reaching Immortal takes about a thousand years.</li>
                         <li><strong>Sects invest in their best.</strong> Disciples who show early talent or break through quickly get rare techniques, personal teachers and time to cultivate. Everyone else gets duties: guarding borders, refining materials, teaching juniors. The work keeps the sect running and eats the hours a disciple needs to grow. Over the years the gap widens, which is a large part of why so few reach the higher realms.</li>
-                        <li><strong>Tribulations test the whole cultivator.</strong> Every stage is won by facing trials, inside and out. Past Core Formation, growth needs experience: combat, insight, heartbreak, discovery. A cultivator who only meditates in seclusion stalls.</li>
-                        <li><strong>The world is vast.</strong> Travelers tell of oceans larger than kingdoms, sky realms on the backs of moving mountains, and desert empires ruled by beasts older than any sect. The strongest cultivators admit they have seen only a small part of it.</li>
+                        <li><strong>Tribulations test the whole cultivator.</strong> Every stage is won by facing trials, inside and out. Past Core Formation, growth needs experience: combat, insight, heartbreak, discovery. A cultivator who only meditates in seclusion stops advancing.</li>
+                        <li><strong>The world is vast.</strong> Travelers tell of oceans no ship has crossed, sky realms on the backs of moving mountains, and desert empires ruled by beasts older than any sect. The strongest cultivators admit they have seen only a small part of it.</li>
                         <li><strong>Immortals are real, and rarely seen.</strong> They seldom rule kingdoms or lead armies. Most live in seclusion, following their own Daos, or in the City of Immortals, which is said to lie outside time and space. Meeting one can change your fate, or end it.</li>
                         <li><strong>Karma is real.</strong> Steal from the weak, betray an ally or do harm without cause, and misfortune follows. It rarely arrives at once. It builds, corrupting your qi, bending your luck and lowering your odds at every breakthrough.</li>
                         <li><strong>The Dao resists repetition.</strong> Each step along a Dao is harder than the last. Like a scholar who needs a new thesis, a cultivator has to find something new to advance. Cultivating two paths at once (Body and Soul, say) is rare, but it gives you a second angle on every problem and makes breakthroughs easier.</li>
@@ -850,7 +855,7 @@
         </div>
         <script>
 document.addEventListener('DOMContentLoaded', function () {
-  const BUDGET = 10;
+  const BUDGET = 12;
 
   // ---------- Data ----------
   const PROFESSIONS = ['Formation Affinity', 'Talisman Affinity', 'Alchemy Affinity', 'Refiner Affinity', 'Healer Affinity', 'Puppet Affinity', 'Cooking Affinity'];
@@ -865,6 +870,14 @@ document.addEventListener('DOMContentLoaded', function () {
   const SECT_ICON = { 'Divine Turtle Sect': '🐢', 'Peacock Sect': '🦚', 'Mountain Sect': '⛰️', 'Hao Family Sect': '🐉' };
 
   // Build profile dimensions (mirrors the comparison table J used for his own builds)
+  const DIM_HELP = {
+    speed: 'How fast you advance through the realms.',
+    survival: 'How hard you are to kill, trap or break.',
+    dao: 'How far your understanding can go, and how sound your breakthroughs are. Speed is how fast you climb; Dao potential is how high.',
+    social: 'Allies, reputation and favors you can call on.',
+    autonomy: 'How free you are to choose your own path, without a sect, patron or family directing you.',
+    explore: 'How well you find and reach hidden places, resources and opportunities.'
+  };
   const DIMS = [
     ['speed', 'Cultivation Speed'],
     ['survival', 'Survivability'],
@@ -874,10 +887,10 @@ document.addEventListener('DOMContentLoaded', function () {
     ['explore', 'Exploration']
   ];
   const STATS = {
-    'Divine Turtle Sect': { speed: 2, survival: 3, dao: 1, social: 2, autonomy: 1, explore: 1 },
-    'Peacock Sect': { speed: 2, survival: 1, dao: 1, social: 3, autonomy: 1, explore: 1 },
-    'Mountain Sect': { speed: 1, survival: 1, dao: 2, social: 0, autonomy: 3, explore: 3 },
-    'Hao Family Sect': { speed: 2, survival: 2, dao: 1, social: 3, autonomy: 0, explore: 1 },
+    'Divine Turtle Sect': { speed: 2, survival: 2, dao: 1, social: 2, autonomy: 0, explore: 1 },
+    'Peacock Sect': { speed: 2, survival: 0, dao: 1, social: 3, autonomy: 1, explore: 1 },
+    'Mountain Sect': { speed: 1, survival: 1, dao: 2, social: 0, autonomy: 3, explore: 2 },
+    'Hao Family Sect': { speed: 2, survival: 1, dao: 1, social: 2, autonomy: 0, explore: 2 },
 
     'Passive Cultivation': { speed: 4 },
     'Experience-Based Breakthroughs': { speed: 1, dao: 2, explore: 1 },
@@ -891,12 +904,12 @@ document.addEventListener('DOMContentLoaded', function () {
     'Empty Vessel': { speed: 1, dao: 3 },
     'Beast Bond': { survival: 2, explore: 1 },
     'Artificial Guide': { speed: 2, survival: 1, dao: 2 },
-    'Formation Affinity': { survival: 2, explore: 1 },
+    'Formation Affinity': { survival: 1, dao: 1 },
     'Talisman Affinity': { survival: 1 },
     'Alchemy Affinity': { speed: 1, social: 1 },
-    'Refiner Affinity': { social: 1 },
-    'Healer Affinity': { survival: 1, social: 1 },
-    'Puppet Affinity': { survival: 1 },
+    'Refiner Affinity': { social: 1, autonomy: 1 },
+    'Healer Affinity': { social: 1, survival: 1 },
+    'Puppet Affinity': { survival: 1, autonomy: 1 },
     'Cooking Affinity': { speed: 1 },
     'Body as Sanctuary': { survival: 3 },
     'Fluid Identity': { autonomy: 2 },
@@ -906,8 +919,9 @@ document.addEventListener('DOMContentLoaded', function () {
     'Qi Compass': { explore: 2 },
     'Return': { survival: 1, social: 1, explore: 2 },
     'Spiritual Appraisal': { social: 1, explore: 1 },
-    'Sword Affinity': { survival: 1 }, 'Spear Affinity': { survival: 1 }, 'Fist Affinity': { survival: 1 },
-    'Blade Affinity': { survival: 1 }, 'Whip Affinity': { survival: 1 }, 'Bow Affinity': { survival: 1 }
+    // Each weapon leans a build in its own direction instead of all adding survivability
+    'Sword Affinity': { dao: 1 }, 'Spear Affinity': { survival: 1 }, 'Fist Affinity': { survival: 1 },
+    'Blade Affinity': { autonomy: 1 }, 'Whip Affinity': { dao: 1 }, 'Bow Affinity': { explore: 1 }
   };
 
   const ARCHETYPES = {
@@ -961,8 +975,6 @@ document.addEventListener('DOMContentLoaded', function () {
       text: "The fragment has a craft to think about. Your Dao may come out of a workshop." },
     { id: 'hundred-lives', all: ['Experience-Based Breakthroughs', 'Fluid Identity'], kind: 'resonance', name: 'A Hundred Lives',
       text: "Every new region brings a new identity and new experiences, and each one counts toward your next breakthrough." },
-    { id: 'three-paths', all: ['Balanced Mind–Body', 'Balanced Soul–Body', 'Balanced Soul–Mind'], kind: 'resonance', name: 'Three Paths, One Step',
-      text: "Raise any one path and the other two follow." },
     { id: 'strings', all: ['Whip Affinity', 'Puppet Affinity'], kind: 'resonance', name: 'Strings and Lash',
       text: "Whip and puppet threads are the same skill: control at a distance." },
     { id: 'guardian', all: ['Return', 'Protect the Realm'], kind: 'resonance', name: 'Ever-Present Guardian',
@@ -1051,7 +1063,9 @@ document.addEventListener('DOMContentLoaded', function () {
     return p;
   }
   function level(v) { return v >= 7 ? 'Very High' : v >= 5 ? 'High' : v >= 3 ? 'Medium' : v >= 1 ? 'Low' : 'None'; }
-  function ranked(p) { return DIMS.map(([k]) => k).sort((a, b) => p[b] - p[a] || DIMS.findIndex(d => d[0] === a) - DIMS.findIndex(d => d[0] === b)); }
+  // Ties break toward the rarer trait, so a build is named for what sets it apart
+  const TIE_ORDER = ['explore', 'autonomy', 'social', 'dao', 'survival', 'speed'];
+  function ranked(p) { return DIMS.map(([k]) => k).sort((a, b) => p[b] - p[a] || TIE_ORDER.indexOf(a) - TIE_ORDER.indexOf(b)); }
   function archetype(p) {
     const r = ranked(p);
     const order = DIMS.map(d => d[0]);
@@ -1183,11 +1197,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const p = profile(selections);
     const arch = archetype(p);
     const r = ranked(p);
-    const dimName = k => DIMS.find(d => d[0] === k)[1].toLowerCase();
+    const dimName = k => DIMS.find(d => d[0] === k)[1].toLowerCase().replace('dao', 'Dao');
     const identity = `${selections.sect ? SECT_PHRASE[selections.sect] : 'a sectless wanderer'} ${weaponPhrase(selections.martial)}, ${selections.goal ? GOAL_PHRASE[selections.goal] : 'with no destination yet'}`;
     const max = Math.max(8, ...Object.values(p));
     const bars = DIMS.map(([k, label]) => `
-      <div class="bar-row"><span class="bar-label">${label}</span>
+      <div class="bar-row" title="${DIM_HELP[k]}"><span class="bar-label">${label}</span>
         <span class="bar"><span class="bar-fill" style="width:${Math.round(p[k] / max * 100)}%"></span></span>
         <span class="bar-level">${level(p[k])}</span></div>`).join('');
     const active = activeResonances(selections);
@@ -1206,6 +1220,7 @@ document.addEventListener('DOMContentLoaded', function () {
       <div class="identity"><div class="archetype">${arch}</div><div class="identity-line">${identity.charAt(0).toUpperCase() + identity.slice(1)}.</div>
         <div class="muted">Strongest in ${dimName(r[0])} and ${dimName(r[1])}. Thinnest in ${dimName(r[r.length - 1])}.</div></div>
       <div class="bars">${bars}</div>
+      <details class="dim-help"><summary>What do these mean?</summary><dl>${DIMS.map(([k, l]) => `<dt>${l}</dt><dd>${DIM_HELP[k]}</dd>`).join('')}</dl></details>
       <h3>Combinations in this build</h3>${combos}
       <p class="muted discovered">Combinations discovered across your builds: ${discovered.length}</p>
       <h3>Your picks</h3><div class="picks">${picks}<div><strong>Points:</strong> ${BUDGET - left}/${BUDGET} spent${left < 0 ? ' <span class="over-text">(over budget)</span>' : ''}</div></div>`;
